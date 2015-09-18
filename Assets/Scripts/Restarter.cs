@@ -3,10 +3,14 @@ using System.Collections;
 
 public class Restarter : MonoBehaviour 
 {
-
-	void OnTriggerExit2D(Collider2D c)
+	public static void Restart()
 	{
 		int level = Application.loadedLevel;
 		Application.LoadLevel (level);
+	}
+
+	void OnTriggerExit2D(Collider2D c)
+	{
+		Restart ();
 	}
 }

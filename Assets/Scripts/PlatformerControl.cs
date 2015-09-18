@@ -13,12 +13,18 @@ public class PlatformerControl : MonoBehaviour
 	
 	public bool moveOnJump = true;
 	
+	public bool IsDied 
+	{
+		get;
+		set;
+	}
+
 	public bool IsClimbing 
 	{
 		get;
 		set;
 	}
-	
+
 	public bool IsFalling
 	{
 		get { return rigidbody.velocity.y < 0; }
@@ -39,6 +45,14 @@ public class PlatformerControl : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		if(IsFalling)
+		{
+			OnFalling();
+		}
+
+		if (IsDied)
+			return;
+
 		if(IsGrounded || moveOnJump)
 		{
 			if(Input.GetButton ("Horizontal"))
@@ -60,11 +74,6 @@ public class PlatformerControl : MonoBehaviour
 		if(IsGrounded && Input.GetKeyDown (KeyCode.Space))
 		{
 			OnJumping();
-		}
-
-		if(IsFalling)
-		{
-			OnFalling();
 		}
 	}
 
@@ -127,7 +136,29 @@ public class PlatformerControl : MonoBehaviour
 		velocity.y = moveSpeed * vertical;
 		rigidbody.velocity = velocity;
 	}
-	
+
+	void OnHit()
+	{
+		IsDied = true;
+		animator.SetBool ("Died", true);
+		
+		rigidbody.gravityScale = 0;
+		rigidbody.Sleep ();
+		
+		Collider2D[] cs = GetComponents<Collider2D> ();
+		foreach(Collider2D c in cs)
+		{
+			c.enabled = false;
+		}
+
+		Invoke ("OnDied", 3);
+	}
+
+	void OnDied()
+	{
+		Restarter.Restart ();
+	}
+
 	void OnTriggerEnter2D(Collider2D c)
 	{
 		if(c.tag == "Ladder")
@@ -161,6 +192,14 @@ public class PlatformerControl : MonoBehaviour
 		{
 			IsClimbing = false;
 			rigidbody.gravityScale = 1;
+		}
+	}
+
+	void OnCollisionEnter2D(Collision2D c)
+	{
+		if(c.gameObject.tag == "Bot")
+		{
+			OnHit();
 		}
 	}
 }

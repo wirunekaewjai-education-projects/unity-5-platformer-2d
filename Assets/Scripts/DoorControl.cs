@@ -57,13 +57,15 @@ public class DoorControl : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D c)
 	{
-		if (c.tag == "Door Trigger")
+		if (c.tag == "Player")
 			FlipState ();
 	}
 
 	void OnTriggerExit2D(Collider2D c)
 	{
-		if (c.tag == "Door Trigger")
+		if (c.tag == "Player")
 			FlipState ();
 	}
+
+
 }

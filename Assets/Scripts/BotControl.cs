@@ -6,7 +6,7 @@ public class BotControl : MonoBehaviour
 	private Animator animator;
 	private Rigidbody2D rigidbody;
 
-	private bool running;
+	private bool running, died;
 
 	public float moveSpeed = 3;
 	public float left, right;
@@ -16,13 +16,14 @@ public class BotControl : MonoBehaviour
 		animator = GetComponent<Animator> ();
 		rigidbody = GetComponent<Rigidbody2D> ();
 
+		died = false;
 		running = true;
 		animator.SetBool ("Running", true);
 	}
 
 	void Update () 
 	{
-		if (!running)
+		if (!running || died)
 			return;
 
 		float current = transform.position.x;
@@ -58,6 +59,9 @@ public class BotControl : MonoBehaviour
 
 	void OnFacing()
 	{
+		if (died)
+			return;
+
 		Vector3 scale = transform.localScale;
 		scale.x *= -1f;
 		
@@ -65,5 +69,20 @@ public class BotControl : MonoBehaviour
 
 		running = true;
 		animator.SetBool ("Running", true);
+	}
+
+	void OnHit()
+	{
+		died = true;
+		animator.SetBool ("Died", true);
+
+		rigidbody.gravityScale = 0;
+		rigidbody.Sleep ();
+
+		Collider2D[] cs = GetComponents<Collider2D> ();
+		foreach(Collider2D c in cs)
+		{
+			c.enabled = false;
+		}
 	}
 }
