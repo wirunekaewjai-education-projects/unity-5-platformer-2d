@@ -3,8 +3,9 @@ using System.Collections;
 
 public class PlatformerControl : MonoBehaviour 
 {
-	public Animator animator;
-	public Rigidbody2D rigidbody;
+	private Animator animator;
+	private Rigidbody2D rigidbody;
+
 	public Collider2D groundCollider;
 
 	public float moveSpeed = 3;
@@ -26,6 +27,12 @@ public class PlatformerControl : MonoBehaviour
 	public bool IsGrounded
 	{
 		get { return rigidbody.velocity.y == 0; }
+	}
+
+	void Awake ()
+	{
+		animator = GetComponent<Animator> ();
+		rigidbody = GetComponent<Rigidbody2D> ();
 	}
 
 
