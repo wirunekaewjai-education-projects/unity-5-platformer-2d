@@ -6,6 +6,8 @@ public class PlatformerControl : MonoBehaviour
 	private Animator animator;
 	private Rigidbody2D rigidbody;
 
+	private bool waitingForRestart;
+
 	public Collider2D groundCollider;
 
 	public float moveSpeed = 3;
@@ -32,13 +34,29 @@ public class PlatformerControl : MonoBehaviour
 	
 	public bool IsGrounded
 	{
-		get { return rigidbody.velocity.y == 0; }
+		get 
+		{ 
+			/*
+			Vector2 origin = rigidbody.position;
+			Vector2 direction = Vector2.down;
+
+			// Raycast
+			RaycastHit2D hit = Physics2D.Raycast(origin, direction, 1.1f);
+			if(null == hit)
+				return true;
+			*/
+
+			return rigidbody.velocity.y == 0; 
+		}
 	}
+
 
 	void Awake ()
 	{
 		animator = GetComponent<Animator> ();
 		rigidbody = GetComponent<Rigidbody2D> ();
+
+		waitingForRestart = false;
 	}
 
 
@@ -51,7 +69,18 @@ public class PlatformerControl : MonoBehaviour
 		}
 
 		if (IsDied)
+		{
+			if(waitingForRestart)
+				return;
+
+			if(IsGrounded)
+			{
+				waitingForRestart = true;
+				Invoke ("OnDied", 0.2f);
+			}
+
 			return;
+		}
 
 		if(IsGrounded || moveOnJump)
 		{
@@ -115,7 +144,7 @@ public class PlatformerControl : MonoBehaviour
 	
 	void OnJumping()
 	{
-		Vector3 velocity = rigidbody.velocity;
+		Vector2 velocity = rigidbody.velocity;
 		velocity.y = jumpPower;
 		
 		rigidbody.velocity = velocity;
@@ -131,7 +160,7 @@ public class PlatformerControl : MonoBehaviour
 	void OnClimbing()
 	{
 		float vertical = Input.GetAxis("Vertical");
-		Vector3 velocity = rigidbody.velocity;
+		Vector2 velocity = rigidbody.velocity;
 		
 		velocity.y = moveSpeed * vertical;
 		rigidbody.velocity = velocity;
@@ -141,20 +170,27 @@ public class PlatformerControl : MonoBehaviour
 	{
 		IsDied = true;
 		animator.SetBool ("Died", true);
+
+		Vector2 velocity = rigidbody.velocity;
+		velocity.x = 0;
+
+		rigidbody.velocity = velocity;
 		
+		Invoke ("OnRestart", 3);
+	}
+
+	void OnDied()
+	{
 		rigidbody.gravityScale = 0;
-		rigidbody.Sleep ();
 		
 		Collider2D[] cs = GetComponents<Collider2D> ();
 		foreach(Collider2D c in cs)
 		{
 			c.enabled = false;
 		}
-
-		Invoke ("OnDied", 3);
 	}
 
-	void OnDied()
+	void OnRestart()
 	{
 		Restarter.Restart ();
 	}
@@ -163,7 +199,7 @@ public class PlatformerControl : MonoBehaviour
 	{
 		if(c.tag == "Ladder")
 		{
-			Vector3 velocity = rigidbody.velocity;
+			Vector2 velocity = rigidbody.velocity;
 			velocity.y = 0;
 			
 			rigidbody.velocity = velocity;
@@ -177,7 +213,7 @@ public class PlatformerControl : MonoBehaviour
 			IsClimbing = true;
 			rigidbody.gravityScale = 0;
 			
-			Vector3 velocity = rigidbody.velocity;
+			Vector2 velocity = rigidbody.velocity;
 			
 			if(velocity.y < 0)
 				velocity.y = 0;
@@ -192,6 +228,7 @@ public class PlatformerControl : MonoBehaviour
 		{
 			IsClimbing = false;
 			rigidbody.gravityScale = 1;
+			rigidbody.Sleep();
 		}
 	}
 
