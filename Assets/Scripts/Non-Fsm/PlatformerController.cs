@@ -82,22 +82,6 @@ public class PlatformerController : MonoBehaviour
 		_state = OnAirEnter;
 	}
 	
-	// Elevator State
-	protected virtual void OnElevatorEnter ()
-	{
-		_state = OnElevatorStay;
-	}
-	
-	protected virtual void OnElevatorStay ()
-	{
-		
-	}
-	
-	protected virtual void OnElevatorExit ()
-	{
-		_state = OnAirEnter;
-	}
-	
 	// Flop | Die State
 	protected virtual void OnFlopEnter()
 	{
