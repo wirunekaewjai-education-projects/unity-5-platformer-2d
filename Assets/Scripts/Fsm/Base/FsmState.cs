@@ -3,32 +3,16 @@ using System.Collections.Generic;
 
 public class FsmState : FsmAction
 {
+	private readonly List<FsmAction> _actions = new List<FsmAction>();
+
 	public string name;
-	
-	private readonly List<FsmAction> _actions;
 
-	public FsmState ()
-	{
-		_actions = new List<FsmAction> ();
-
-		OnAwake ();
-	}
-	
-	public FsmState (string name)
-	{
-		this.name = name;
-		
-		_actions = new List<FsmAction> ();
-
-		OnAwake ();
-	}
-	
 	public void Add(FsmAction action)
 	{
 		_actions.Add (action);
 	}
 
-	public virtual void OnAwake ()
+	public virtual void OnStart ()
 	{
 
 	}
@@ -141,5 +125,10 @@ public class FsmState : FsmAction
 		{
 			action.OnTriggerExit2D(fsm, other);
 		}
+	}
+
+	public override string ToString ()
+	{
+		return name;
 	}
 }

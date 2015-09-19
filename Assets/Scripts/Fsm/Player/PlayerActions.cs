@@ -9,19 +9,21 @@ public partial class PlayerFsm
 		{
 			base.OnUpdate (fsm);
 
-			PlayerFsm player = fsm as PlayerFsm;
+			Rigidbody2D rb = fsm [Var.Rigidbody] as Rigidbody2D;
+			Animator anim = fsm [Var.Animator] as Animator;
+			float moveSpeed = (float)fsm [Var.MoveSpeed];
 
 			float h = Input.GetAxisRaw ("Horizontal");
 			
 			// Calculate Move Velocity
-			Vector3 velocity = player.rigidbody.velocity;
-			velocity.x = player.moveSpeed * h;
+			Vector3 velocity = rb.velocity;
+			velocity.x = moveSpeed * h;
 			
 			// Apply Move Velocity
-			player.rigidbody.velocity = velocity;
+			rb.velocity = velocity;
 
 			// Apply Running Animation | Idle
-			player.animator.SetBool ("Running", h != 0);
+			anim.SetBool ("Running", h != 0);
 		}
 	}
 
@@ -31,16 +33,17 @@ public partial class PlayerFsm
 		{
 			base.OnUpdate (fsm);
 
-			PlayerFsm player = fsm as PlayerFsm;
+			Rigidbody2D rb = fsm [Var.Rigidbody] as Rigidbody2D;
+			float moveSpeed = (float)fsm [Var.MoveSpeed];
 
 			float v = Input.GetAxisRaw ("Vertical");
 			
 			// Calculate Move Velocity
-			Vector3 velocity = player.rigidbody.velocity;
-			velocity.y = player.moveSpeed * v;
+			Vector3 velocity = rb.velocity;
+			velocity.y = moveSpeed * v;
 			
 			// Apply Move Velocity
-			player.rigidbody.velocity = velocity;
+			rb.velocity = velocity;
 		}
 	}
 	
@@ -52,14 +55,15 @@ public partial class PlayerFsm
 			
 			if(Input.GetKeyDown(KeyCode.Space))
 			{
-				PlayerFsm player = fsm as PlayerFsm;
+				Rigidbody2D rb = fsm [Var.Rigidbody] as Rigidbody2D;
+				float jumpPower = (float)fsm [Var.JumpPower];
 
 				// Calculate Move Velocity
-				Vector3 velocity = player.rigidbody.velocity;
-				velocity.y = player.jumpPower;
+				Vector3 velocity = rb.velocity;
+				velocity.y = jumpPower;
 				
 				// Apply Move Velocity
-				player.rigidbody.velocity = velocity;
+				rb.velocity = velocity;
 			}
 		}
 	}
@@ -77,14 +81,15 @@ public partial class PlayerFsm
 		{
 			base.OnEnter (fsm);
 
-			PlayerFsm player = fsm as PlayerFsm;
+			Rigidbody2D rb = fsm [Var.Rigidbody] as Rigidbody2D;
+			float jumpPower = (float)fsm [Var.JumpPower];
 
 			// Calculate Move Velocity
-			Vector3 velocity = player.rigidbody.velocity;
-			velocity.y = player.jumpPower;
+			Vector3 velocity = rb.velocity;
+			velocity.y = jumpPower;
 			
 			// Apply Move Velocity
-			player.rigidbody.velocity = velocity;
+			rb.velocity = velocity;
 
 			if (null == finishedState)
 				return;
@@ -98,6 +103,8 @@ public partial class PlayerFsm
 		private FsmState finishedState;
 
 		private Collider2D c1, c2;
+		private Rigidbody2D rb;
+		private Animator anim;
 
 		public FlopAction (FsmState finishedState)
 		{
@@ -108,8 +115,10 @@ public partial class PlayerFsm
 		{
 			base.OnEnter (fsm);
 
-			PlayerFsm player = fsm as PlayerFsm;
-			player.animator.SetTrigger ("Flopping");
+			rb = fsm [Var.Rigidbody] as Rigidbody2D;
+
+			anim = fsm [Var.Animator] as Animator;
+			anim.SetTrigger ("Flopping");
 			
 			c1 = fsm.GetComponent<BoxCollider2D>();
 			c2 = fsm.GetComponent<PolygonCollider2D>();
@@ -122,13 +131,11 @@ public partial class PlayerFsm
 		{
 			base.OnUpdate (fsm);
 
-			PlayerFsm player = fsm as PlayerFsm;
-
-			if (player.rigidbody.velocity.y != 0)
+			if (rb.velocity.y != 0)
 				return;
 			
-			player.rigidbody.gravityScale = 0;
-			player.rigidbody.Sleep ();
+			rb.gravityScale = 0;
+			rb.Sleep ();
 
 			c1.enabled = false;
 			c2.enabled = false;
@@ -142,12 +149,19 @@ public partial class PlayerFsm
 	
 	public class FaceDetection : FsmAction
 	{
+		private Rigidbody2D rb;
+		
+		public override void OnEnter (Fsm fsm)
+		{
+			base.OnEnter (fsm);
+			rb = fsm [Var.Rigidbody] as Rigidbody2D;
+		}
+
 		public override void OnUpdate (Fsm fsm)
 		{
 			base.OnUpdate (fsm);
 
-			PlayerFsm player = fsm as PlayerFsm;
-			float vx = player.rigidbody.velocity.x;
+			float vx = rb.velocity.x;
 			
 			// Moving ?
 			if (vx == 0)
@@ -180,15 +194,15 @@ public partial class PlayerFsm
 			if (!other.gameObject.CompareTag (Tag.Platform))
 				return;
 
-			PlayerFsm player = fsm as PlayerFsm;
-			float vy = player.rigidbody.velocity.y;
-			
+			Rigidbody2D rb = fsm [Var.Rigidbody] as Rigidbody2D;
+			float vy = rb.velocity.y;
+
 			if (Mathf.Abs (vy) > Mathf.Epsilon)
 				return;
-			
+
 			if (null == enter)
 				return;
-			
+
 			fsm.Change(enter);
 		}
 
@@ -275,4 +289,5 @@ public partial class PlayerFsm
 			}
 		}
 	}
+
 }

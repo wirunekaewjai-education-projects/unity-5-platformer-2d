@@ -5,7 +5,7 @@ public class RestartLevel : FsmAction
 	private float delay;
 	private float timeCount;
 
-	public RestartLevel (float delay = 0)
+	public RestartLevel (float delay)
 	{
 		this.delay = delay;
 	}

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class Fsm : MonoBehaviour
 {
 	// States
-	//private readonly List<FsmState> _states = new List<FsmState>();
+	private readonly List<FsmState> _states = new List<FsmState>();
 
 	// Variables
 	private readonly Dictionary<string, object> _vars = new Dictionary<string, object>();
@@ -35,13 +35,11 @@ public class Fsm : MonoBehaviour
 		if(null != _currentState)
 			_currentState.OnEnter (this);
 	}
-
-	/*
+	
 	public void Add(FsmState state)
 	{
 		_states.Add(state);
 	}
-	*/
 
 	private void Awake()
 	{
@@ -75,7 +73,10 @@ public class Fsm : MonoBehaviour
 	
 	protected virtual void OnStart()
 	{
-		
+		foreach(FsmState state in _states)
+		{
+			state.OnStart();
+		}
 	}
 	
 	protected virtual void OnUpdate()
