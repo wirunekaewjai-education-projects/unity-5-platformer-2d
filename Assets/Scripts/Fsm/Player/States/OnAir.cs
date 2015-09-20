@@ -7,6 +7,7 @@ namespace devdayo.Fsm.Player.State
         PlayerFSM player;
 
         Action.HorizontalInput horizontal;
+        Action.JumpAction jump;
         Action.FaceDetect face;
         Action.PlatformDetect platform;
         Action.LadderDetect ladder;
@@ -15,6 +16,7 @@ namespace devdayo.Fsm.Player.State
         void Awake ()
         {
             horizontal = new Action.HorizontalInput();
+            jump = new Action.JumpAction();
             face = new Action.FaceDetect();
 
             platform = new Action.PlatformDetect();
@@ -40,8 +42,9 @@ namespace devdayo.Fsm.Player.State
         {
             if (!enabled)
                 return;
-
-            bot.Collision(player, c, Transition.OnJump, Transition.OnFlop);
+            
+            if(bot.Collision(player, c, -1, Transition.OnFlop))
+                jump.Action(player, -1);
         }
 
         void OnCollisionStay2D(Collision2D c)

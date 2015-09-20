@@ -69,7 +69,7 @@ namespace devdayo.Fsm.Player.Action
 
             // Apply Move Velocity
             player.rigidbody.velocity = velocity;
-
+            
             player.DoTransition(transitionId);
         }
     }

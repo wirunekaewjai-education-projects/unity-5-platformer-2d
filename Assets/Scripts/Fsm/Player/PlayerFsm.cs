@@ -5,11 +5,11 @@ namespace devdayo.Fsm.Player
 {
     public class PlayerFSM : StateMachineBehaviour
     {
-        public Rigidbody2D rigidbody;
-        public Animator animator;
+        internal Rigidbody2D rigidbody;
+        internal Animator animator;
 
-        public Collider2D boxCollider;
-        public Collider2D polyCollider;
+        internal Collider2D boxCollider;
+        internal Collider2D polyCollider;
 
         public float moveSpeed = 3;
         public float jumpPower = 6;
@@ -26,7 +26,6 @@ namespace devdayo.Fsm.Player
         void Start()
         {
             AddTransition(Transition.OnAir,     typeof(State.OnAir));
-            AddTransition(Transition.OnJump,    typeof(State.OnJump));
             AddTransition(Transition.OnGround,  typeof(State.OnGround));
             AddTransition(Transition.OnLadder,  typeof(State.OnLadder));
             AddTransition(Transition.OnFlop,    typeof(State.OnFlop));
@@ -38,8 +37,7 @@ namespace devdayo.Fsm.Player
 
     public static class Transition
     {
-        public const int OnAir      = 0;
-        public const int OnJump     = 1;
+        public const int OnAir      = 1;
         public const int OnGround   = 2;
         public const int OnLadder   = 3;
         public const int OnFlop     = 4;

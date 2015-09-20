@@ -40,7 +40,7 @@ namespace devdayo.Fsm.Player.State
             face.Action(player);
         }
 
-        void OnCollsionEnter2D(Collision2D c)
+        void OnCollisionEnter2D(Collision2D c)
         {
             if (!enabled)
                 return;

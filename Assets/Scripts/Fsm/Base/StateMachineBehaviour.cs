@@ -6,6 +6,8 @@ namespace devdayo.Fsm
 {
     public class StateMachineBehaviour : MonoBehaviour
     {
+        public bool destroyStateOnDisabled = true;
+
         private Dictionary<int, Type> transitions = new Dictionary<int, Type>();
         private Dictionary<Type, StateBehaviour> states = new Dictionary<Type, StateBehaviour>();
 
@@ -29,7 +31,15 @@ namespace devdayo.Fsm
                 return;
 
             if (null != currentState)
+            {
                 currentState.enabled = false;
+
+                if(destroyStateOnDisabled)
+                {
+                    states.Remove(currentState.GetType());
+                    Destroy(currentState);
+                }
+            }
 
             Type type = transitions[transitionId];
 
@@ -37,7 +47,14 @@ namespace devdayo.Fsm
                 states[type] = gameObject.AddComponent(type) as StateBehaviour;
 
             currentId = transitionId;
-            currentState = states[type];
+            StartCoroutine(OnChangeState(states[type]));
+        }
+
+        private System.Collections.IEnumerator OnChangeState(StateBehaviour nextState)
+        {
+            yield return new WaitForEndOfFrame();
+
+            currentState = nextState;
             currentState.enabled = true;
         }
 
