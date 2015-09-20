@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class CameraControl : MonoBehaviour 
+public class Follower : MonoBehaviour 
 {
 	public Transform target;
 

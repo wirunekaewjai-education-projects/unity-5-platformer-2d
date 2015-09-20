@@ -46,7 +46,11 @@ namespace devdayo.Fsm.Player.State
             if (!enabled)
                 return;
 
-            if (c.gameObject.CompareTag(Tag.Platform))
+            if (c.gameObject.CompareTag(Tag.Elevator))
+            {
+                player.DoTransition(Transition.OnElevator);
+            }
+            else if(c.gameObject.CompareTag(Tag.Platform))
             {
                 float vy = player.rigidbody.velocity.y;
                 if (Mathf.Abs(vy) < Mathf.Epsilon)
@@ -54,7 +58,7 @@ namespace devdayo.Fsm.Player.State
                     player.DoTransition(Transition.OnGround);
                 }
             }
-            
+
         }
         
         void OnTriggerStay2D(Collider2D c)

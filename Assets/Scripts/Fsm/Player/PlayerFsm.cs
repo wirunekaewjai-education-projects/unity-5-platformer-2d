@@ -25,11 +25,12 @@ namespace devdayo.Fsm.Player
 
         void Start()
         {
-            AddTransition(Transition.OnAir,     typeof(State.OnAir));
-            AddTransition(Transition.OnGround,  typeof(State.OnGround));
-            AddTransition(Transition.OnLadder,  typeof(State.OnLadder));
-            AddTransition(Transition.OnFlop,    typeof(State.OnFlop));
-            AddTransition(Transition.OnDied,    typeof(State.OnDied));
+            AddTransition(Transition.OnAir,      typeof(State.OnAir));
+            AddTransition(Transition.OnGround,   typeof(State.OnGround));
+            AddTransition(Transition.OnLadder,   typeof(State.OnLadder));
+            AddTransition(Transition.OnElevator, typeof(State.OnElevator));
+            AddTransition(Transition.OnFlop,     typeof(State.OnFlop));
+            AddTransition(Transition.OnDied,     typeof(State.OnDied));
 
             DoTransition(Transition.OnAir);
         }
@@ -92,7 +93,8 @@ namespace devdayo.Fsm.Player
         public const int OnAir      = 1;
         public const int OnGround   = 2;
         public const int OnLadder   = 3;
-        public const int OnFlop     = 4;
-        public const int OnDied     = 5;
+        public const int OnElevator = 4;
+        public const int OnFlop     = 5;
+        public const int OnDied     = 6;
     }
 }
