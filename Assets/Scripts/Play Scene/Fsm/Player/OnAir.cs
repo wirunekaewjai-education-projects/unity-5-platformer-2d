@@ -18,7 +18,7 @@ namespace devdayo.Fsm.Player.State
 
             player.UpdateHorizontal();
         }
-
+        
         void OnCollisionEnter2D(Collision2D c)
         {
             if (!enabled)
@@ -26,19 +26,18 @@ namespace devdayo.Fsm.Player.State
 
             if (c.gameObject.CompareTag(Tag.Bot))
             {
-                Vector3 direction = c.relativeVelocity.normalized;
-                float angle = Vector3.Angle(Vector3.down, direction);
+                Vector3 p1 = player.transform.position;
+                Vector3 p2 = c.transform.position;
 
-                // Die || Bounce Up (Jump)
-                if (angle >= 45f)
-                {
-                    player.DoTransition(Transition.OnFlop);
-                }
-                else
-                {
-                    player.Jump(true);
-                }
+                Vector3 direction = (p1 - p2).normalized;
+                float angle = Vector3.Angle(Vector3.up, direction);
+
+                if (angle > 30f)
+                    return;
+
+                player.Jump(true);
             }
+            
         }
 
         void OnCollisionStay2D(Collision2D c)
@@ -50,7 +49,7 @@ namespace devdayo.Fsm.Player.State
             {
                 player.DoTransition(Transition.OnElevator);
             }
-            else if(c.gameObject.CompareTag(Tag.Platform))
+            else if (c.gameObject.CompareTag(Tag.Platform))
             {
                 float vy = player.rigidbody.velocity.y;
                 if (Mathf.Abs(vy) < Mathf.Epsilon)
@@ -58,9 +57,23 @@ namespace devdayo.Fsm.Player.State
                     player.DoTransition(Transition.OnGround);
                 }
             }
+            else if (c.gameObject.CompareTag(Tag.Bot))
+            {
+                Vector3 p1 = player.transform.position;
+                Vector3 p2 = c.transform.position;
 
+                Vector3 direction = (p1 - p2).normalized;
+                float angle = Vector3.Angle(Vector3.up, direction);
+
+                if (angle <= 30f)
+                    return;
+
+                // Die !!!
+                player.rigidbody.velocity = Physics2D.gravity;
+                player.DoTransition(Transition.OnFlop);
+            }
         }
-        
+
         void OnTriggerStay2D(Collider2D c)
         {
             if (!enabled)

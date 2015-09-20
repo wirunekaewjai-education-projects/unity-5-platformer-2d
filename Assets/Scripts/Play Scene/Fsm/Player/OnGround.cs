@@ -20,11 +20,11 @@ namespace devdayo.Fsm.Player.State
             player.Jump(false);
         }
 
-        void OnCollisionEnter2D(Collision2D c)
+        void OnCollisionStay2D(Collision2D c)
         {
             if (!enabled)
                 return;
-
+            
             if (c.gameObject.CompareTag(Tag.Bot))
             {
                 player.DoTransition(Transition.OnFlop);

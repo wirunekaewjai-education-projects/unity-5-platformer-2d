@@ -9,23 +9,27 @@ namespace devdayo.Fsm.Bot
         internal Rigidbody2D rigidbody;
         internal Animator animator;
 
-        internal Collider2D boxCollider;
-        internal Collider2D polyCollider;
+        public Collider2D boxCollider;
+        public Collider2D polyCollider;
 
-        internal Tween tween;
+        public Tween tween;
 
         public float moveSpeed = 3;
         public float jumpPower = 6;
+
+        public bool immortal = false;
 
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
             animator = GetComponent<Animator>();
 
+            /*
             boxCollider = GetComponent<BoxCollider2D>();
             polyCollider = GetComponent<PolygonCollider2D>();
 
             tween = GetComponent<Tween>();
+            */
         }
 
         void Start()

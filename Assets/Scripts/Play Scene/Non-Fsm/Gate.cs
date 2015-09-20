@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Door : Tween 
+public class Gate : Tween 
 {
 	void Reset ()
 	{

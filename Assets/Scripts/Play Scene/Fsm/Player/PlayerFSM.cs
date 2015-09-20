@@ -8,8 +8,8 @@ namespace devdayo.Fsm.Player
         internal Rigidbody2D rigidbody;
         internal Animator animator;
 
-        internal Collider2D boxCollider;
-        internal Collider2D polyCollider;
+        public Collider2D boxCollider;
+        public Collider2D polyCollider;
 
         public float moveSpeed = 3;
         public float jumpPower = 6;
@@ -18,9 +18,6 @@ namespace devdayo.Fsm.Player
         {
             rigidbody = GetComponent<Rigidbody2D>();
             animator = GetComponent<Animator>();
-
-            boxCollider = GetComponent<BoxCollider2D>();
-            polyCollider = GetComponent<PolygonCollider2D>();
         }
 
         void Start()

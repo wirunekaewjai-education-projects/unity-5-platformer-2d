@@ -22,7 +22,7 @@ namespace devdayo.Fsm.Player.State
 
             Rigidbody2D rb = player.rigidbody;
 
-            if (rb.velocity.y != 0)
+            if (Mathf.Abs(rb.velocity.y) > Mathf.Epsilon)
                 return;
 
             rb.gravityScale = 0;

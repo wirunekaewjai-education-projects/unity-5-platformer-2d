@@ -6,7 +6,7 @@ namespace devdayo.Fsm
 {
     public class StateMachineBehaviour : MonoBehaviour
     {
-        public bool destroyStateOnDisabled = true;
+        private bool destroyStateOnDisabled = true;
 
         private Dictionary<int, Type> transitions = new Dictionary<int, Type>();
         private Dictionary<Type, StateBehaviour> states = new Dictionary<Type, StateBehaviour>();

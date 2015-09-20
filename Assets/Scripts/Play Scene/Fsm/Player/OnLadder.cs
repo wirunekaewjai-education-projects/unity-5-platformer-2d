@@ -35,6 +35,7 @@ namespace devdayo.Fsm.Player.State
             if (!enabled)
                 return;
 
+            /*
             if (c.gameObject.CompareTag(Tag.Bot))
             {
                 Vector3 direction = c.relativeVelocity.normalized;
@@ -46,6 +47,7 @@ namespace devdayo.Fsm.Player.State
                     player.DoTransition(Transition.OnFlop);
                 }
             }
+            */
         }
 
         void OnTriggerExit2D(Collider2D c)

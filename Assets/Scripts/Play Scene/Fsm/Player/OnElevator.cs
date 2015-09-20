@@ -38,6 +38,22 @@ namespace devdayo.Fsm.Player.State
             }
         }
 
+
+        void OnCollisionStay2D(Collision2D c)
+        {
+            if (!enabled)
+                return;
+
+            if (c.gameObject.CompareTag(Tag.Platform))
+            {
+                float vy = player.rigidbody.velocity.y;
+                if (Mathf.Abs(vy) < Mathf.Epsilon)
+                {
+                    player.DoTransition(Transition.OnGround);
+                }
+            }
+        }
+
         void OnTriggerExit2D(Collider2D c)
         {
             if (!enabled)

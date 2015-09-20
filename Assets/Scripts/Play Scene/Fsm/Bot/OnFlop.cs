@@ -10,7 +10,7 @@ namespace devdayo.Fsm.Bot.State
         {
             bot = fsm as BotFSM;
             bot.animator.SetTrigger("Flopping");
-
+            
             bot.boxCollider.enabled = false;
             bot.polyCollider.enabled = true;
         }
@@ -22,12 +22,12 @@ namespace devdayo.Fsm.Bot.State
 
             Rigidbody2D rb = bot.rigidbody;
 
-            if (rb.velocity.y != 0)
+            if (Mathf.Abs(rb.velocity.y) > Mathf.Epsilon)
                 return;
 
             rb.gravityScale = 0;
             rb.Sleep();
-
+            
             bot.boxCollider.enabled = false;
             bot.polyCollider.enabled = false;
 

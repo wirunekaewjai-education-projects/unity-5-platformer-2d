@@ -32,25 +32,34 @@ namespace devdayo.Fsm.Bot.State
             // Flip Face Direction
             transform.localScale = scale;
         }
-
+        
+        
         void OnCollisionEnter2D(Collision2D c)
         {
-            if (!enabled)
+            if (!enabled || bot.immortal)
                 return;
 
-            if (!c.gameObject.CompareTag("Player"))
+            if (!c.gameObject.CompareTag(Tag.Player))
                 return;
 
+            /*
             Vector3 direction = c.relativeVelocity.normalized;
             float angle = Vector3.Angle(Vector3.up, direction);
+            */
 
-            if (angle > 45f)
+            Vector3 p1 = c.transform.position;
+            Vector3 p2 = bot.transform.position;
+
+            Vector3 direction = (p1 - p2).normalized;
+            float angle = Vector3.Angle(Vector3.up, direction);
+
+            if (angle > 30f)
                 return;
 
             // Flop & Died
             bot.tween.enabled = false;
             bot.DoTransition(Transition.OnFlop);
         }
-
+        
     }
 }
