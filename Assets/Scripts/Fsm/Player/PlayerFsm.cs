@@ -1,42 +1,48 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public partial class PlayerFsm : Fsm
+namespace devdayo.Fsm.Player
 {
-	public static class Var
-	{
-		public static readonly string Rigidbody = "rigidbody";
-		public static readonly string Animator  = "animator";
+    public class PlayerFSM : StateMachineBehaviour
+    {
+        public Rigidbody2D rigidbody;
+        public Animator animator;
 
-		public static readonly string MoveSpeed  = "moveSpeed";
-		public static readonly string JumpPower  = "jumpPower";
-	}
+        public Collider2D boxCollider;
+        public Collider2D polyCollider;
 
-	protected override void OnAwake ()
-	{
-		base.OnAwake ();
+        public float moveSpeed = 3;
+        public float jumpPower = 6;
 
-		// Add Variables
-		this [Var.Rigidbody] = GetComponent<Rigidbody2D> ();
-		this [Var.Animator] = GetComponent<Animator> ();
+        void Awake()
+        {
+            rigidbody = GetComponent<Rigidbody2D>();
+            animator = GetComponent<Animator>();
 
-		this [Var.MoveSpeed] = 3f;
-		this [Var.JumpPower] = 6f;
+            boxCollider = GetComponent<BoxCollider2D>();
+            polyCollider = GetComponent<PolygonCollider2D>();
+        }
 
-		// Add States
-		this.Add (State.Air);
-		this.Add (State.Jump);
-		this.Add (State.Ground);
-		this.Add (State.Ladder);
-		this.Add (State.Flop);
-		this.Add (State.Died);
-	}
+        void Start()
+        {
+            AddTransition(Transition.OnAir,     typeof(State.OnAir));
+            AddTransition(Transition.OnJump,    typeof(State.OnJump));
+            AddTransition(Transition.OnGround,  typeof(State.OnGround));
+            AddTransition(Transition.OnLadder,  typeof(State.OnLadder));
+            AddTransition(Transition.OnFlop,    typeof(State.OnFlop));
+            AddTransition(Transition.OnDied,    typeof(State.OnDied));
 
-	protected override void OnStart ()
-	{
-		base.OnStart ();
-		
-		// Begin FSM
-		this.Change (State.Air);
-	}
+            DoTransition(Transition.OnAir);
+        }
+    }
+
+    public static class Transition
+    {
+        public const int OnAir      = 0;
+        public const int OnJump     = 1;
+        public const int OnGround   = 2;
+        public const int OnLadder   = 3;
+        public const int OnFlop     = 4;
+        public const int OnDied     = 5;
+    }
 }

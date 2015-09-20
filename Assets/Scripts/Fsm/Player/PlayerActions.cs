@@ -1,293 +1,169 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-// Actions
-public partial class PlayerFsm
+namespace devdayo.Fsm.Player.Action
 {
-	public class HorizontalInput : FsmAction
-	{
-		public override void OnUpdate (Fsm fsm)
-		{
-			base.OnUpdate (fsm);
+    public struct HorizontalInput
+    {
+        public void Action(PlayerFSM player)
+        {
+            float moveSpeed = player.moveSpeed;
 
-			Rigidbody2D rb = fsm [Var.Rigidbody] as Rigidbody2D;
-			Animator anim = fsm [Var.Animator] as Animator;
-			float moveSpeed = (float)fsm [Var.MoveSpeed];
+            float h = Input.GetAxisRaw("Horizontal");
 
-			float h = Input.GetAxisRaw ("Horizontal");
-			
-			// Calculate Move Velocity
-			Vector3 velocity = rb.velocity;
-			velocity.x = moveSpeed * h;
-			
-			// Apply Move Velocity
-			rb.velocity = velocity;
+            // Calculate Move Velocity
+            Vector3 velocity = player.rigidbody.velocity;
+            velocity.x = moveSpeed * h;
 
-			// Apply Running Animation | Idle
-			anim.SetBool ("Running", h != 0);
-		}
-	}
+            // Apply Move Velocity
+            player.rigidbody.velocity = velocity;
 
-	public class VerticalInput : FsmAction
-	{
-		public override void OnUpdate (Fsm fsm)
-		{
-			base.OnUpdate (fsm);
+            // Apply Running Animation | Idle
+            player.animator.SetBool("Running", h != 0);
+        }
+    }
 
-			Rigidbody2D rb = fsm [Var.Rigidbody] as Rigidbody2D;
-			float moveSpeed = (float)fsm [Var.MoveSpeed];
+    public class VerticalInput
+    {
+        public void Action(PlayerFSM player)
+        {
+            float moveSpeed = player.moveSpeed;
 
-			float v = Input.GetAxisRaw ("Vertical");
-			
-			// Calculate Move Velocity
-			Vector3 velocity = rb.velocity;
-			velocity.y = moveSpeed * v;
-			
-			// Apply Move Velocity
-			rb.velocity = velocity;
-		}
-	}
-	
-	public class JumpInput : FsmAction
-	{
-		public override void OnUpdate (Fsm fsm)
-		{
-			base.OnUpdate (fsm);
-			
-			if(Input.GetKeyDown(KeyCode.Space))
-			{
-				Rigidbody2D rb = fsm [Var.Rigidbody] as Rigidbody2D;
-				float jumpPower = (float)fsm [Var.JumpPower];
+            float v = Input.GetAxisRaw("Vertical");
 
-				// Calculate Move Velocity
-				Vector3 velocity = rb.velocity;
-				velocity.y = jumpPower;
-				
-				// Apply Move Velocity
-				rb.velocity = velocity;
-			}
-		}
-	}
+            // Calculate Move Velocity
+            Vector3 velocity = player.rigidbody.velocity;
+            velocity.y = moveSpeed * v;
 
-	public class JumpAction : FsmAction
-	{
-		private FsmState finishedState;
+            // Apply Move Velocity
+            player.rigidbody.velocity = velocity;
+        }
+    }
 
-		public JumpAction (FsmState finishedState)
-		{
-			this.finishedState = finishedState;
-		}
+    public class JumpInput
+    {
+        public void Action(PlayerFSM player)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                float jumpPower = player.jumpPower;
 
-		public override void OnEnter (Fsm fsm)
-		{
-			base.OnEnter (fsm);
+                // Calculate Move Velocity
+                Vector3 velocity = player.rigidbody.velocity;
+                velocity.y = jumpPower;
 
-			Rigidbody2D rb = fsm [Var.Rigidbody] as Rigidbody2D;
-			float jumpPower = (float)fsm [Var.JumpPower];
+                // Apply Move Velocity
+                player.rigidbody.velocity = velocity;
+            }
+        }
+    }
 
-			// Calculate Move Velocity
-			Vector3 velocity = rb.velocity;
-			velocity.y = jumpPower;
-			
-			// Apply Move Velocity
-			rb.velocity = velocity;
+    public class JumpAction
+    {
+        public void Action(PlayerFSM player, int transitionId)
+        {
+            float jumpPower = player.jumpPower;
 
-			if (null == finishedState)
-				return;
+            // Calculate Move Velocity
+            Vector3 velocity = player.rigidbody.velocity;
+            velocity.y = jumpPower;
 
-			fsm.Change (finishedState);
-		}
-	}
+            // Apply Move Velocity
+            player.rigidbody.velocity = velocity;
 
-	public class FlopAction : FsmAction
-	{
-		private FsmState finishedState;
+            player.DoTransition(transitionId);
+        }
+    }
 
-		private Collider2D c1, c2;
-		private Rigidbody2D rb;
-		private Animator anim;
+    public struct FaceDetect
+    {
+        public void Action(PlayerFSM player)
+        {
+            Rigidbody2D rb = player.rigidbody;
 
-		public FlopAction (FsmState finishedState)
-		{
-			this.finishedState = finishedState;
-		}
+            // Moving ?
+            if (rb.velocity.x == 0)
+                return;
 
-		public override void OnEnter (Fsm fsm)
-		{
-			base.OnEnter (fsm);
+            // Calculate Face Direction
+            Vector3 scale = player.transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(rb.velocity.x);
 
-			rb = fsm [Var.Rigidbody] as Rigidbody2D;
+            // Flip Face Direction
+            player.transform.localScale = scale;
+        }
+    }
 
-			anim = fsm [Var.Animator] as Animator;
-			anim.SetTrigger ("Flopping");
-			
-			c1 = fsm.GetComponent<BoxCollider2D>();
-			c2 = fsm.GetComponent<PolygonCollider2D>();
-			
-			c1.enabled = false;
-			c2.enabled = true;
-		}
+    public struct PlatformDetect
+    {
+        public bool Stay(PlayerFSM player, Collision2D other, int transitionId)
+        {
+            if (!other.gameObject.CompareTag(Tag.Platform))
+                return false;
+            
+            float vy = player.rigidbody.velocity.y;
 
-		public override void OnUpdate (Fsm fsm)
-		{
-			base.OnUpdate (fsm);
+            if (Mathf.Abs(vy) > Mathf.Epsilon)
+                return false;
 
-			if (rb.velocity.y != 0)
-				return;
-			
-			rb.gravityScale = 0;
-			rb.Sleep ();
+            player.DoTransition(transitionId);
+            return true;
+        }
 
-			c1.enabled = false;
-			c2.enabled = false;
+        public bool Exit(PlayerFSM player, Collision2D other, int transitionId)
+        {
+            if (!other.gameObject.CompareTag(Tag.Platform))
+                return false;
 
-			if (null == finishedState)
-				return;
+            player.DoTransition(transitionId);
+            return true;
+        }
+    }
 
-			fsm.Change (finishedState);
-		}
-	}
-	
-	public class FaceDetection : FsmAction
-	{
-		private Rigidbody2D rb;
-		
-		public override void OnEnter (Fsm fsm)
-		{
-			base.OnEnter (fsm);
-			rb = fsm [Var.Rigidbody] as Rigidbody2D;
-		}
+    public struct LadderDetect
+    {
+        public bool Stay(PlayerFSM player, Collider2D other, int transitionId)
+        {
+            if (!other.gameObject.CompareTag(Tag.Ladder))
+                return false;
+            
+            player.DoTransition(transitionId);
+            return true;
+        }
 
-		public override void OnUpdate (Fsm fsm)
-		{
-			base.OnUpdate (fsm);
+        public bool Exit(PlayerFSM player, Collider2D other, int transitionId)
+        {
+            if (!other.gameObject.CompareTag(Tag.Ladder))
+                return false;
 
-			float vx = rb.velocity.x;
-			
-			// Moving ?
-			if (vx == 0)
-				return;
-			
-			// Calculate Face Direction
-			Vector3 scale = fsm.transform.localScale;
-			scale.x = Mathf.Abs (scale.x) * Mathf.Sign (vx);
-			
-			// Flip Face Direction
-			fsm.transform.localScale = scale;
-		}
-	}
+            player.DoTransition(transitionId);
+            return true;
+        }
+    }
 
+    public class BotDetect
+    {
+        public bool Collision(PlayerFSM player, Collision2D other, int onHeadTransitionId, int onBodyTransitionId)
+        {
+            if (!other.gameObject.CompareTag(Tag.Bot))
+                return false;
 
-	public class PlatformDetection : FsmAction
-	{
-		private FsmState enter, exit;
+            Vector3 direction = other.relativeVelocity.normalized;
+            float angle = Vector3.Angle(Vector3.down, direction);
 
-		public PlatformDetection (FsmState enter, FsmState exit)
-		{
-			this.enter = enter;
-			this.exit = exit;
-		}
+            // Bounce Up (Jump) or Die
+            if (angle < 45f)
+            {
+                if(onHeadTransitionId > -1)
+                    player.DoTransition(onHeadTransitionId);
+            }
+            else if(onBodyTransitionId > -1)
+            {
+                player.DoTransition(onBodyTransitionId);
+            }
 
-		public override void OnCollisionStay2D (Fsm fsm, Collision2D other)
-		{
-			base.OnCollisionStay2D (fsm, other);
-
-			if (!other.gameObject.CompareTag (Tag.Platform))
-				return;
-
-			Rigidbody2D rb = fsm [Var.Rigidbody] as Rigidbody2D;
-			float vy = rb.velocity.y;
-
-			if (Mathf.Abs (vy) > Mathf.Epsilon)
-				return;
-
-			if (null == enter)
-				return;
-
-			fsm.Change(enter);
-		}
-
-		public override void OnCollisionExit2D (Fsm fsm, Collision2D other)
-		{
-			base.OnCollisionExit2D (fsm, other);
-			
-			if (!other.gameObject.CompareTag (Tag.Platform))
-				return;
-
-			if (null == exit)
-				return;
-
-			fsm.Change(exit);
-		}
-	}
-
-	public class LadderDetection : FsmAction
-	{
-		private FsmState enter, exit;
-
-		public LadderDetection(FsmState enter, FsmState exit)
-		{
-			this.enter = enter;
-			this.exit = exit;
-		}
-
-		public override void OnTriggerEnter2D (Fsm fsm, Collider2D other)
-		{
-			base.OnTriggerEnter2D (fsm, other);
-
-			if (!other.gameObject.CompareTag (Tag.Ladder))
-				return;
-
-			if (null == enter)
-				return;
-
-			fsm.Change (enter);
-		}
-
-		public override void OnTriggerExit2D (Fsm fsm, Collider2D other)
-		{
-			base.OnTriggerExit2D (fsm, other);
-			
-			if (!other.gameObject.CompareTag (Tag.Ladder))
-				return;
-
-			if (null == exit)
-				return;
-			
-			fsm.Change (exit);
-		}
-	}
-
-	public class BotDetection : FsmAction
-	{
-		private FsmState headEvent, bodyEvent;
-
-		public BotDetection (FsmState headEvent, FsmState bodyEvent)
-		{
-			this.headEvent = headEvent;
-			this.bodyEvent = bodyEvent;
-		}
-
-		public override void OnCollisionEnter2D (Fsm fsm, Collision2D other)
-		{
-			base.OnCollisionEnter2D (fsm, other);
-
-			if(!other.gameObject.CompareTag(Tag.Bot))
-				return;
-			
-			Vector3 direction = other.relativeVelocity.normalized;
-			float angle = Vector3.Angle (Vector3.down, direction);
-
-			// Bounce Up (Jump) or Die
-			if (angle < 45f)
-			{
-				if(null != headEvent)
-					fsm.Change(headEvent);
-			}
-			else if(null != bodyEvent)
-			{
-				fsm.Change(bodyEvent);
-			}
-		}
-	}
+            return true;
+        }
+    }
+    
 
 }
