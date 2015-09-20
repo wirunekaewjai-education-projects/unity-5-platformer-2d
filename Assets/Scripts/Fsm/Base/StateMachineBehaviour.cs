@@ -10,9 +10,15 @@ namespace devdayo.Fsm
 
         private Dictionary<int, Type> transitions = new Dictionary<int, Type>();
         private Dictionary<Type, StateBehaviour> states = new Dictionary<Type, StateBehaviour>();
+        private Dictionary<Type, GameObject> owners = new Dictionary<Type, GameObject>();
 
         private StateBehaviour currentState;
         private int currentId = int.MinValue;
+
+        public void SetStateOwner(Type state, GameObject owner)
+        {
+            owners[state] = owner;
+        }
 
         public void AddTransition(int transitionId, Type nextState)
         {
@@ -36,15 +42,16 @@ namespace devdayo.Fsm
 
                 if(destroyStateOnDisabled)
                 {
-                    states.Remove(currentState.GetType());
-                    Destroy(currentState);
+                    DestroyState(currentState);
                 }
             }
 
             Type type = transitions[transitionId];
 
             if (!states.ContainsKey(type))
-                states[type] = gameObject.AddComponent(type) as StateBehaviour;
+            {
+                CreateState(type);
+            }
 
             currentId = transitionId;
             StartCoroutine(OnChangeState(states[type]));
@@ -56,6 +63,28 @@ namespace devdayo.Fsm
 
             currentState = nextState;
             currentState.enabled = true;
+        }
+
+        private void CreateState(Type type)
+        {
+            GameObject owner = gameObject;
+
+            if(owners.ContainsKey(type))
+                owner = owners[type];
+
+            states[type] = owner.AddComponent(type) as StateBehaviour;
+            StateBehaviour state = states[type];
+            state.fsm = this;
+        }
+
+        private void DestroyState(StateBehaviour state)
+        {
+            Type type = state.GetType();
+
+            owners.Remove(type);
+            states.Remove(type);
+
+            Destroy(state);
         }
 
         public virtual void OnDestroy()

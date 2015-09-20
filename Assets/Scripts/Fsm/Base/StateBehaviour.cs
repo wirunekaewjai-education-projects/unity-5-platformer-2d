@@ -15,6 +15,10 @@ namespace devdayo.Fsm
 
                 return _fsm;
             }
+            internal set
+            {
+                _fsm = value;
+            }
         }
     }
 }
