@@ -1,6 +1,11 @@
 # unity-5-platformer-2d
 Platformer 2D Game (Unity 5) for Video Tutorials
 
+### Update #5 :: 2015.09.20 - 10.57 PM
+- ปรับโค้ด Finite State Machine ทั้ง Player และ Bot
+- แก้บั๊ค Player เวลายืนบนแท่นเลื่อน
+- เพิ่ม Menu Scene
+
 ### Update #4 :: 2015.09.19 - 11.40 PM
 - เพิ่มโค้ดตัวอย่างที่เป็น Finite State Machine
 
