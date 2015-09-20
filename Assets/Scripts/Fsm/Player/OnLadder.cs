@@ -5,27 +5,7 @@ namespace devdayo.Fsm.Player.State
     public class OnLadder : StateBehaviour
     {
         PlayerFSM player;
-
-        Action.HorizontalInput horizontal;
-        Action.VerticalInput vertical;
-
-        Action.FaceDetect face;
-        
-        Action.LadderDetect ladder;
-        Action.BotDetect bot;
-
-        private float gravityScale;
-
-        void Awake()
-        {
-            horizontal = new Action.HorizontalInput();
-            vertical = new Action.VerticalInput();
-
-            face = new Action.FaceDetect();
-            
-            ladder = new Action.LadderDetect();
-            bot = new Action.BotDetect();
-        }
+        float gravityScale;
 
         void OnEnable()
         {
@@ -46,10 +26,8 @@ namespace devdayo.Fsm.Player.State
             if (!enabled)
                 return;
 
-            horizontal.Action(player);
-            vertical.Action(player);
-
-            face.Action(player);
+            player.UpdateHorizontal();
+            player.UpdateVertical();
         }
 
         void OnCollsionEnter2D(Collision2D c)
@@ -57,8 +35,17 @@ namespace devdayo.Fsm.Player.State
             if (!enabled)
                 return;
 
-            int flopId = Transition.OnFlop;
-            bot.Collision(player, c, flopId, flopId);
+            if (c.gameObject.CompareTag(Tag.Bot))
+            {
+                Vector3 direction = c.relativeVelocity.normalized;
+                float angle = Vector3.Angle(Vector3.down, direction);
+
+                // Bounce Up (Jump) or Die
+                if (angle >= 45f)
+                {
+                    player.DoTransition(Transition.OnFlop);
+                }
+            }
         }
 
         void OnTriggerExit2D(Collider2D c)
@@ -66,7 +53,10 @@ namespace devdayo.Fsm.Player.State
             if (!enabled)
                 return;
 
-            ladder.Exit(player, c, Transition.OnAir);
+            if (c.gameObject.CompareTag(Tag.Ladder))
+            {
+                player.DoTransition(Transition.OnAir);
+            }
         }
     }
 }
