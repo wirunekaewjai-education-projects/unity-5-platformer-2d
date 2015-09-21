@@ -54,10 +54,17 @@ namespace devdayo.Fsm
             }
 
             currentId = transitionId;
-            StartCoroutine(OnChangeState(states[type]));
+			OnChangeState(states[type]);
+            //StartCoroutine(OnChangeState(states[type]));
         }
 
-        private System.Collections.IEnumerator OnChangeState(StateBehaviour nextState)
+		private void OnChangeState(StateBehaviour nextState)
+		{
+			currentState = nextState;
+			currentState.enabled = true;
+		}
+
+        private System.Collections.IEnumerator OnChangeStateNextFrame(StateBehaviour nextState)
         {
             yield return new WaitForEndOfFrame();
 
