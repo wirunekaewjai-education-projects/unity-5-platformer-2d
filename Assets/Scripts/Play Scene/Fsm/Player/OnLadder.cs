@@ -28,28 +28,9 @@ namespace devdayo.Fsm.Player.State
 
             player.UpdateHorizontal();
             player.UpdateVertical();
+            player.Jump(false);
         }
-
-        void OnCollisionEnter2D(Collision2D c)
-        {
-            if (!enabled)
-                return;
-
-            /*
-            if (c.gameObject.CompareTag(Tag.Bot))
-            {
-                Vector3 direction = c.relativeVelocity.normalized;
-                float angle = Vector3.Angle(Vector3.down, direction);
-
-                // Bounce Up (Jump) or Die
-                if (angle >= 45f)
-                {
-                    player.DoTransition(Transition.OnFlop);
-                }
-            }
-            */
-        }
-
+        
         void OnTriggerExit2D(Collider2D c)
         {
             if (!enabled)
@@ -57,7 +38,7 @@ namespace devdayo.Fsm.Player.State
 
             if (c.gameObject.CompareTag(Tag.Ladder))
             {
-                player.DoTransition(Transition.OnAir);
+                player.DoTransition(Transition.OnSoar);
             }
         }
     }

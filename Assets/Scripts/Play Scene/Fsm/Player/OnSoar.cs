@@ -2,13 +2,19 @@
 
 namespace devdayo.Fsm.Player.State
 {
-    public class OnAir : StateBehaviour
+    public class OnSoar : StateBehaviour
     {
         PlayerFSM player;
         
         void OnEnable ()
         {
             player = fsm as PlayerFSM;
+            player.animator.SetBool("Soaring", true);
+        }
+
+        void OnDisable ()
+        {
+            player.animator.SetBool("Soaring", false);
         }
 
         void Update ()

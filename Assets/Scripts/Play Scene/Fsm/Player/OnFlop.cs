@@ -15,23 +15,43 @@ namespace devdayo.Fsm.Player.State
             player.polyCollider.enabled = true;
         }
 
-        void Update()
+        void OnFlipColliderState()
+        {
+            player.polyCollider.enabled = true;
+        }
+
+        void OnCollisionEnter2D(Collision2D c)
         {
             if (!enabled)
                 return;
 
-            Rigidbody2D rb = player.rigidbody;
+            if (c.gameObject.CompareTag(Tag.Bot))
+            {
+                player.polyCollider.enabled = false;
+                Invoke("OnFlipColliderState", Time.deltaTime);
+            }
+        }
 
-            if (Mathf.Abs(rb.velocity.y) > Mathf.Epsilon)
+
+        void OnCollisionStay2D(Collision2D c)
+        {
+            if (!enabled)
                 return;
 
-            rb.gravityScale = 0;
-            rb.Sleep();
+            if (c.gameObject.CompareTag(Tag.Platform) ||
+                c.gameObject.CompareTag(Tag.Elevator) ||
+                c.gameObject.CompareTag(Tag.Ladder))
+            {
+                Rigidbody2D rb = player.rigidbody;
 
-            player.boxCollider.enabled = false;
-            player.polyCollider.enabled = false;
+                rb.gravityScale = 0;
+                rb.Sleep();
 
-            player.DoTransition(Transition.OnDied);
+                player.boxCollider.enabled = false;
+                player.polyCollider.enabled = false;
+
+                player.DoTransition(Transition.OnDied);
+            }
         }
     }
 }

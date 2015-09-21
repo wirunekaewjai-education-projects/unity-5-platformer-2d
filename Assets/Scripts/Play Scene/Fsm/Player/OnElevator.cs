@@ -61,7 +61,7 @@ namespace devdayo.Fsm.Player.State
 
             if (c.gameObject.CompareTag(Tag.Elevator))
             {
-                player.DoTransition(Transition.OnAir);
+                player.DoTransition(Transition.OnSoar);
             }
         }
     }
