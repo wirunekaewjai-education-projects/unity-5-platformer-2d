@@ -16,8 +16,6 @@ public class Checkpoint : MonoBehaviour
 		PlayerPrefs.SetFloat("CheckpointX", position.x);
 		PlayerPrefs.SetFloat("CheckpointY", position.y);
 
-		print("Saved");
-
 		enabled = false;
 	}
 }
