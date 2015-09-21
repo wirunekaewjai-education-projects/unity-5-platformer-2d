@@ -19,7 +19,8 @@ public class Menu : MonoBehaviour
     public void OnNewGameClick()
     {
         if(PlayerPrefs.GetInt("Saved", 0) == 0)
-        {
+		{
+			PlayerPrefs.SetInt("Saved", 0);
             Application.LoadLevel(newGameLevelIndex);
         }
         else
@@ -32,7 +33,7 @@ public class Menu : MonoBehaviour
     public void OnContinueClick()
     {
         int levelIndex = PlayerPrefs.GetInt("LevelIndex", newGameLevelIndex);
-
+		Application.LoadLevel(levelIndex);
     }
 
     public void OnQuitClick()
@@ -48,6 +49,7 @@ public class Menu : MonoBehaviour
 
     public void OnYesButton()
     {
+		PlayerPrefs.SetInt("Saved", 0);
         Application.LoadLevel(newGameLevelIndex);
     }
 

@@ -26,10 +26,11 @@ namespace devdayo.Fsm.Player
             AddTransition(Transition.OnGround,   typeof(State.OnGround));
             AddTransition(Transition.OnLadder,   typeof(State.OnLadder));
             AddTransition(Transition.OnElevator, typeof(State.OnElevator));
-            AddTransition(Transition.OnFlop,     typeof(State.OnFlop));
-            AddTransition(Transition.OnDied,     typeof(State.OnDied));
+			AddTransition(Transition.OnFlop,     typeof(State.OnFlop));
+			AddTransition(Transition.OnDied,     typeof(State.OnDied));
+			AddTransition(Transition.OnLoad,     typeof(State.OnLoad));
 
-            DoTransition(Transition.OnSoar);
+            DoTransition(Transition.OnLoad);
         }
 
         public void UpdateHorizontal()
@@ -92,6 +93,7 @@ namespace devdayo.Fsm.Player
         public const int OnLadder   = 3;
         public const int OnElevator = 4;
         public const int OnFlop     = 5;
-        public const int OnDied     = 6;
+		public const int OnDied     = 6;
+		public const int OnLoad     = 7;
     }
 }

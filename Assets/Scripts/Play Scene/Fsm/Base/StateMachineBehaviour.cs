@@ -38,11 +38,11 @@ namespace devdayo.Fsm
 
             if (null != currentState)
             {
-                currentState.enabled = false;
+				currentState.enabled = false;
 
                 if(destroyStateOnDisabled)
                 {
-                    DestroyState(currentState);
+					DestroyState(currentState);
                 }
             }
 
@@ -54,22 +54,8 @@ namespace devdayo.Fsm
             }
 
             currentId = transitionId;
-			OnChangeState(states[type]);
-            //StartCoroutine(OnChangeState(states[type]));
-        }
-
-		private void OnChangeState(StateBehaviour nextState)
-		{
-			currentState = nextState;
+			currentState = states[type];
 			currentState.enabled = true;
-		}
-
-        private System.Collections.IEnumerator OnChangeStateNextFrame(StateBehaviour nextState)
-        {
-            yield return new WaitForEndOfFrame();
-
-            currentState = nextState;
-            currentState.enabled = true;
         }
 
         private void CreateState(Type type)

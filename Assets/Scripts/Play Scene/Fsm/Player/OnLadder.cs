@@ -6,11 +6,14 @@ namespace devdayo.Fsm.Player.State
     {
         PlayerFSM player;
         float gravityScale;
+		
+		void Awake()
+		{
+			player = fsm as PlayerFSM;
+		}
 
         void OnEnable()
         {
-            player = fsm as PlayerFSM;
-
             gravityScale = player.rigidbody.gravityScale;
             player.rigidbody.gravityScale = 0;
         }

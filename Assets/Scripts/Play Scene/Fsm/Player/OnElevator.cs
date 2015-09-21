@@ -6,7 +6,7 @@ namespace devdayo.Fsm.Player.State
     {
         PlayerFSM player;
 
-        void OnEnable()
+        void Awake()
         {
             player = fsm as PlayerFSM;
         }

@@ -6,9 +6,13 @@ namespace devdayo.Fsm.Player.State
     {
         PlayerFSM player;
 
+		void Awake()
+		{
+			player = fsm as PlayerFSM;
+		}
+
         void OnEnable()
         {
-            player = fsm as PlayerFSM;
             player.animator.SetTrigger("Flopping");
 
             player.boxCollider.enabled = false;

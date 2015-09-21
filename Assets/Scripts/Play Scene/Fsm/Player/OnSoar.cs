@@ -5,10 +5,14 @@ namespace devdayo.Fsm.Player.State
     public class OnSoar : StateBehaviour
     {
         PlayerFSM player;
-        
+		
+		void Awake()
+		{
+			player = fsm as PlayerFSM;
+		}
+
         void OnEnable ()
         {
-            player = fsm as PlayerFSM;
             player.animator.SetBool("Soaring", true);
         }
 
