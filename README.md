@@ -1,6 +1,9 @@
 # unity-5-platformer-2d
 Platformer 2D Game (Unity 5) for Video Tutorials
 
+### Update #6.1 :: 2015.09.21 - 05.04 PM
+- เพิ่มระบบจดจำ Checkpoint สามารถกลับมาเล่นต่อได้ (ใช้ PlayerPrefs)
+
 ### Update #6 :: 2015.09.21 - 03.05 PM
 - เปลี่ยน Script "Gate" เป็น "Gate FSM"
 - เพิ่ม UserInterface แสดง Coin ใน Play Scene
