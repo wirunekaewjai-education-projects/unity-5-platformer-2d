@@ -1,6 +1,12 @@
 # unity-5-platformer-2d
 Platformer 2D Game (Unity 5) for Video Tutorials
 
+### Update #6 :: 2015.09.21 - 03.05 PM
+- เปลี่ยน Script "Gate" เป็น "Gate FSM"
+- เพิ่ม UserInterface แสดง Coin ใน Play Scene
+- ตั้งกฏการเปิด Gate ดูนับจาก Coin
+- สร้างระบบจัดการ Coin เป็นแบบ Singleton + Observable (ใช้ Delegate ในการ Subscribe)
+
 ### Update #5 :: 2015.09.20 - 10.57 PM
 - ปรับโค้ด Finite State Machine ทั้ง Player และ Bot
 - แก้บั๊ค Player เวลายืนบนแท่นเลื่อน
