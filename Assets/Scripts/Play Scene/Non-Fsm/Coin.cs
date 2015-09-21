@@ -8,6 +8,7 @@ public class Coin : MonoBehaviour
 		if (!c.CompareTag ("Player"))
 			return;
 
+		CoinManager.Instance.Increase();
 		DestroyObject (gameObject);
 	}
 }

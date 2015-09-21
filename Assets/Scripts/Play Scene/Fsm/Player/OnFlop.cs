@@ -17,7 +17,7 @@ namespace devdayo.Fsm.Player.State
 
         void OnFlipColliderState()
         {
-            player.polyCollider.enabled = true;
+			player.polyCollider.enabled = !player.polyCollider.enabled;
         }
 
         void OnCollisionEnter2D(Collision2D c)
@@ -28,7 +28,8 @@ namespace devdayo.Fsm.Player.State
             if (c.gameObject.CompareTag(Tag.Bot))
             {
                 player.polyCollider.enabled = false;
-                Invoke("OnFlipColliderState", Time.deltaTime);
+				Invoke("OnFlipColliderState", Time.deltaTime);
+				Invoke("OnFlipColliderState", Time.deltaTime * 3f);
             }
         }
 
