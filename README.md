@@ -1,6 +1,9 @@
 # unity-5-platformer-2d
 Platformer 2D Game (Unity 5) for Video Tutorials
 
+### Update #7 :: 2015.09.22 - 08.41 PM
+- เปลี่ยนเพรมเวิร์ค FSM เป็น https://github.com/wirunekaewjai/unity-observable-monobehaviour-fsm โดยนำมาแปลงเป็น .dll แล้วนำมาใช้
+
 ### Update #6.1 :: 2015.09.21 - 05.04 PM
 - เพิ่มระบบจดจำ Checkpoint สามารถกลับมาเล่นต่อได้ (ใช้ PlayerPrefs)
 
