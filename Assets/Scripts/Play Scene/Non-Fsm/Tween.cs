@@ -29,8 +29,9 @@ public class Tween : MonoBehaviour
 
 	void Update ()
 	{
-		_state ();
-	}
+		if(null != _state)
+            _state();
+    }
 
 	void OnMove()
 	{
