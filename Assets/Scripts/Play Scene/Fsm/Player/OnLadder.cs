@@ -1,47 +1,42 @@
 ﻿using UnityEngine;
 
-namespace devdayo.Fsm.Player.State
+namespace Devdayo.Platformer2D.Player
 {
-    public class OnLadder : StateBehaviour
+    public class OnLadder : FsmStateBehaviour
     {
         PlayerFSM player;
         float gravityScale;
-		
-		void Awake()
-		{
-			player = fsm as PlayerFSM;
-		}
 
-        void OnEnable()
+        public override void OnEnter()
         {
+            player = fsm.owner as PlayerFSM;
+
             gravityScale = player.rigidbody.gravityScale;
             player.rigidbody.gravityScale = 0;
         }
 
-        void OnDisable()
+        public override void OnExit()
         {
             player.rigidbody.gravityScale = gravityScale;
             gravityScale = 0;
         }
 
-        void Update()
+        public override void OnUpdate()
         {
-            if (!enabled)
-                return;
+            base.OnUpdate();
 
             player.UpdateHorizontal();
             player.UpdateVertical();
             player.Jump(false);
         }
-        
-        void OnTriggerExit2D(Collider2D c)
-        {
-            if (!enabled)
-                return;
 
-            if (c.gameObject.CompareTag(Tag.Ladder))
+        public override void OnTriggerExit2D(Collider2D other)
+        {
+            base.OnTriggerExit2D(other);
+
+            if (other.gameObject.CompareTag(Tag.Ladder))
             {
-                player.DoTransition(Transition.OnSoar);
+                fsm.Go<OnSoar>();
             }
         }
     }

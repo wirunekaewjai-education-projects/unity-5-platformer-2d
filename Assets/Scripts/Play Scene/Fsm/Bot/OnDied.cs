@@ -1,12 +1,18 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-namespace devdayo.Fsm.Bot.State
+namespace Devdayo.Platformer2D.Bot
 {
-    public class OnDied : StateBehaviour
+    public class OnDied : FsmState
     {
-        void OnEnable()
+        public override void OnEnter()
         {
-            Destroy(fsm.gameObject, 3);
+            GameObject.Destroy(fsm.gameObject, 3);
+        }
+
+        public override void OnExit()
+        {
+            
         }
     }
 }

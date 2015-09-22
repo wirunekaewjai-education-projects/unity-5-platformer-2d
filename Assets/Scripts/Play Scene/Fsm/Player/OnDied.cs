@@ -1,16 +1,25 @@
 ﻿using UnityEngine;
+using System.Collections;
+using System;
 
-namespace devdayo.Fsm.Player.State
+namespace Devdayo.Platformer2D.Player
 {
-    public class OnDied : StateBehaviour
+    public class OnDied : FsmState
     {
-        void OnEnable()
+        public override void OnEnter()
         {
-            Invoke("OnRestartLevel", 3);
+            fsm.owner.StartCoroutine(OnRestartLevel());
         }
 
-        void OnRestartLevel()
+        public override void OnExit()
         {
+            
+        }
+
+        IEnumerator OnRestartLevel()
+        {
+            yield return new WaitForSeconds(3);
+
             int level = Application.loadedLevel;
             Application.LoadLevel(level);
         }

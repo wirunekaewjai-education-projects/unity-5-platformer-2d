@@ -1,55 +1,56 @@
 ﻿using UnityEngine;
 
-namespace devdayo.Fsm.Player.State
+namespace Devdayo.Platformer2D.Player
 {
-    public class OnGround : StateBehaviour
+    public class OnGround : FsmStateBehaviour
     {
         PlayerFSM player;
         
-		void Awake()
-		{
-			player = fsm as PlayerFSM;
-		}
-
-        void Update()
+        public override void OnEnter()
         {
-            if (!enabled)
-                return;
+            player = fsm.owner as PlayerFSM;
+        }
+
+        public override void OnExit()
+        {
+
+        }
+
+        public override void OnUpdate()
+        {
+            base.OnUpdate();
 
             player.UpdateHorizontal();
             player.Jump(false);
         }
 
-        void OnCollisionStay2D(Collision2D c)
+        public override void OnCollisionStay2D(Collision2D other)
         {
-            if (!enabled)
-                return;
-            
-            if (c.gameObject.CompareTag(Tag.Bot))
+            base.OnCollisionStay2D(other);
+
+            if (other.gameObject.CompareTag(Tag.Bot))
             {
-                player.DoTransition(Transition.OnFlop);
+                fsm.Go<OnFlop>();
             }
         }
 
-        void OnCollisionExit2D(Collision2D c)
+        public override void OnCollisionExit2D(Collision2D other)
         {
-            if (!enabled)
-                return;
+            base.OnCollisionExit2D(other);
 
-            if (c.gameObject.CompareTag(Tag.Platform))
+            if (other.gameObject.CompareTag(Tag.Platform))
             {
-                player.DoTransition(Transition.OnSoar);
+                fsm.Go<OnSoar>();
             }
         }
 
-        void OnTriggerStay2D(Collider2D c)
+        public override void OnTriggerStay2D(Collider2D other)
         {
-            if (!enabled)
-                return;
+            base.OnTriggerStay2D(other);
 
-            if (c.gameObject.CompareTag(Tag.Ladder))
+            if (other.gameObject.CompareTag(Tag.Ladder))
             {
-                player.DoTransition(Transition.OnLadder);
+                fsm.Go<OnLadder>();
             }
         }
 

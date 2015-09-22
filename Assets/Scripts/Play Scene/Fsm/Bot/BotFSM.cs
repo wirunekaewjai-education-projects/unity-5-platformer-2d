@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace devdayo.Fsm.Bot
+namespace Devdayo.Platformer2D.Bot
 {
     [RequireComponent(typeof(Tween))]
-    public class BotFSM : StateMachineBehaviour
+    public class BotFSM : MonoBehaviour
     {
         internal Rigidbody2D rigidbody;
         internal Animator animator;
+
+        internal Fsm fsm;
 
         public Collider2D boxCollider;
         public Collider2D polyCollider;
@@ -24,28 +26,12 @@ namespace devdayo.Fsm.Bot
             rigidbody = GetComponent<Rigidbody2D>();
             animator = GetComponent<Animator>();
 
-            /*
-            boxCollider = GetComponent<BoxCollider2D>();
-            polyCollider = GetComponent<PolygonCollider2D>();
-
-            tween = GetComponent<Tween>();
-            */
+            fsm = new Fsm(this);
         }
 
         void Start()
         {
-            AddTransition(Transition.OnMove, typeof(State.OnMove));
-            AddTransition(Transition.OnFlop, typeof(State.OnFlop));
-            AddTransition(Transition.OnDied, typeof(State.OnDied));
-
-            DoTransition(Transition.OnMove);
+            fsm.Go<OnMove>();
         }
-    }
-
-    public static class Transition
-    {
-        public const int OnMove = 1;
-        public const int OnFlop = 2;
-        public const int OnDied = 3;
     }
 }

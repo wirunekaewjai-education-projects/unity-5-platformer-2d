@@ -1,24 +1,24 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-namespace devdayo.Fsm.Bot.State
+namespace Devdayo.Platformer2D.Bot
 {
-    public class OnFlop : StateBehaviour
+    public class OnFlop : FsmStateBehaviour
     {
         BotFSM bot;
-
-        void OnEnable()
+        
+        public override void OnEnter()
         {
-            bot = fsm as BotFSM;
+            bot = GetOwner<BotFSM>();
             bot.animator.SetTrigger("Flopping");
-            
+
             bot.boxCollider.enabled = false;
             bot.polyCollider.enabled = true;
         }
 
-        void Update()
+        public override void OnUpdate()
         {
-            if (!enabled)
-                return;
+            base.OnUpdate();
 
             Rigidbody2D rb = bot.rigidbody;
 
@@ -27,11 +27,16 @@ namespace devdayo.Fsm.Bot.State
 
             rb.gravityScale = 0;
             rb.Sleep();
-            
+
             bot.boxCollider.enabled = false;
             bot.polyCollider.enabled = false;
 
-            bot.DoTransition(Transition.OnDied);
+            fsm.Go<OnDied>();
+        }
+
+        public override void OnExit()
+        {
+            
         }
     }
 }

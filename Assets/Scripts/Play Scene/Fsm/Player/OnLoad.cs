@@ -1,31 +1,32 @@
 ﻿using UnityEngine;
 
-namespace devdayo.Fsm.Player.State
+namespace Devdayo.Platformer2D.Player
 {
-	public class OnLoad : StateBehaviour
+	public class OnLoad : FsmState
 	{
-		PlayerFSM player;
-		
-		void Awake()
-		{
-			player = fsm as PlayerFSM;
-		}
+        public override void OnEnter()
+        {
+            PlayerFSM player = fsm.owner as PlayerFSM;
 
-		void Start()
-		{
-			int saved = PlayerPrefs.GetInt("Saved", 0);
+            int saved = PlayerPrefs.GetInt("Saved", 0);
 
-			if (saved == 1)
-			{
-				Vector3 position = player.transform.position;
+            if (saved == 1)
+            {
+                Vector3 position = player.transform.position;
 
-				position.x = PlayerPrefs.GetFloat("CheckpointX", position.x);
-				position.y = PlayerPrefs.GetFloat("CheckpointY", position.y);
+                position.x = PlayerPrefs.GetFloat("CheckpointX", position.x);
+                position.y = PlayerPrefs.GetFloat("CheckpointY", position.y);
 
-				player.transform.position = position;
-			}
+                player.transform.position = position;
+            }
 
-			player.DoTransition(Transition.OnGround);
-		}
+            fsm.Go<OnGround>();
+        }
+
+        public override void OnExit()
+        {
+            
+        }
+        
 	}
 }

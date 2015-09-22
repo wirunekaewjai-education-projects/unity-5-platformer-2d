@@ -1,18 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-namespace devdayo.Fsm.Bot.State
+namespace Devdayo.Platformer2D.Bot
 {
-    public class OnMove : StateBehaviour
+    public class OnMove : FsmStateBehaviour
     {
         BotFSM bot;
-        
-        void OnEnable()
+
+        public override void OnEnter()
         {
-            bot = fsm as BotFSM;
+            bot = GetOwner<BotFSM>();
         }
 
-        void Update()
+        public override void OnUpdate()
         {
+            base.OnUpdate();
+
             Rigidbody2D rb = bot.rigidbody;
             Vector2 velocity = rb.velocity;
 
@@ -26,28 +29,29 @@ namespace devdayo.Fsm.Bot.State
                 return;
 
             // Calculate Face Direction
-            Vector3 scale = transform.localScale;
+            Vector3 scale = bot.transform.localScale;
             scale.x = Mathf.Abs(scale.x) * Mathf.Sign(velocity.x);
 
             // Flip Face Direction
-            transform.localScale = scale;
+            bot.transform.localScale = scale;
         }
-        
-        
-        void OnCollisionEnter2D(Collision2D c)
+
+        public override void OnExit()
         {
-            if (!enabled || bot.immortal)
+            
+        }
+
+        public override void OnCollisionEnter2D(Collision2D other)
+        {
+            base.OnCollisionEnter2D(other);
+
+            if (bot.immortal)
                 return;
 
-            if (!c.gameObject.CompareTag(Tag.Player))
+            if (!other.gameObject.CompareTag(Tag.Player))
                 return;
 
-            /*
-            Vector3 direction = c.relativeVelocity.normalized;
-            float angle = Vector3.Angle(Vector3.up, direction);
-            */
-
-            Vector3 p1 = c.transform.position;
+            Vector3 p1 = other.transform.position;
             Vector3 p2 = bot.transform.position;
 
             Vector3 direction = (p1 - p2).normalized;
@@ -58,8 +62,8 @@ namespace devdayo.Fsm.Bot.State
 
             // Flop & Died
             bot.tween.enabled = false;
-            bot.DoTransition(Transition.OnFlop);
+
+            fsm.Go<OnFlop>();
         }
-        
     }
 }

@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace devdayo.Fsm.Player
+namespace Devdayo.Platformer2D.Player
 {
-    public class PlayerFSM : StateMachineBehaviour
+    public class PlayerFSM : MonoBehaviour
     {
         internal Rigidbody2D rigidbody;
         internal Animator animator;
+
+        internal Fsm fsm;
 
         public Collider2D boxCollider;
         public Collider2D polyCollider;
@@ -18,19 +20,13 @@ namespace devdayo.Fsm.Player
         {
             rigidbody = GetComponent<Rigidbody2D>();
             animator = GetComponent<Animator>();
+
+            fsm = new Fsm(this);
         }
 
         void Start()
         {
-            AddTransition(Transition.OnSoar,     typeof(State.OnSoar));
-            AddTransition(Transition.OnGround,   typeof(State.OnGround));
-            AddTransition(Transition.OnLadder,   typeof(State.OnLadder));
-            AddTransition(Transition.OnElevator, typeof(State.OnElevator));
-			AddTransition(Transition.OnFlop,     typeof(State.OnFlop));
-			AddTransition(Transition.OnDied,     typeof(State.OnDied));
-			AddTransition(Transition.OnLoad,     typeof(State.OnLoad));
-
-            DoTransition(Transition.OnLoad);
+            fsm.Go<OnLoad>();
         }
 
         public void UpdateHorizontal()
@@ -84,16 +80,5 @@ namespace devdayo.Fsm.Player
             }
         }
 
-    }
-
-    public static class Transition
-    {
-        public const int OnSoar     = 1;
-        public const int OnGround   = 2;
-        public const int OnLadder   = 3;
-        public const int OnElevator = 4;
-        public const int OnFlop     = 5;
-		public const int OnDied     = 6;
-		public const int OnLoad     = 7;
     }
 }

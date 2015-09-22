@@ -1,61 +1,57 @@
 ﻿using UnityEngine;
+using System.Collections;
 
-namespace devdayo.Fsm.Player.State
+namespace Devdayo.Platformer2D.Player
 {
-    public class OnFlop : StateBehaviour
+    public class OnFlop : FsmStateBehaviour
     {
         PlayerFSM player;
 
-		void Awake()
-		{
-			player = fsm as PlayerFSM;
-		}
-
-        void OnEnable()
+        public override void OnEnter()
         {
+            player = fsm.owner as PlayerFSM;
             player.animator.SetTrigger("Flopping");
 
             player.boxCollider.enabled = false;
             player.polyCollider.enabled = true;
         }
 
-        void OnFlipColliderState()
+        public override void OnExit()
         {
+            player.rigidbody.Sleep();
+        }
+        
+        IEnumerator OnFlipColliderState()
+        {
+            yield return new WaitForEndOfFrame();
 			player.polyCollider.enabled = !player.polyCollider.enabled;
         }
 
-        void OnCollisionEnter2D(Collision2D c)
+        public override void OnCollisionEnter2D(Collision2D other)
         {
-            if (!enabled)
-                return;
+            base.OnCollisionEnter2D(other);
 
-            if (c.gameObject.CompareTag(Tag.Bot))
+            if (other.gameObject.CompareTag(Tag.Bot))
             {
                 player.polyCollider.enabled = false;
-				Invoke("OnFlipColliderState", Time.deltaTime);
-				Invoke("OnFlipColliderState", Time.deltaTime * 3f);
+                player.StartCoroutine(OnFlipColliderState());
             }
         }
 
-
-        void OnCollisionStay2D(Collision2D c)
+        public override void OnCollisionStay2D(Collision2D other)
         {
-            if (!enabled)
-                return;
+            base.OnCollisionStay2D(other);
 
-            if (c.gameObject.CompareTag(Tag.Platform) ||
-                c.gameObject.CompareTag(Tag.Elevator) ||
-                c.gameObject.CompareTag(Tag.Ladder))
+            if (other.gameObject.CompareTag(Tag.Platform) ||
+                other.gameObject.CompareTag(Tag.Elevator) ||
+                other.gameObject.CompareTag(Tag.Ladder))
             {
-                Rigidbody2D rb = player.rigidbody;
-
-                rb.gravityScale = 0;
-                rb.Sleep();
+                player.rigidbody.Sleep();
 
                 player.boxCollider.enabled = false;
                 player.polyCollider.enabled = false;
 
-                player.DoTransition(Transition.OnDied);
+                fsm.Go<OnDied>();
             }
         }
     }

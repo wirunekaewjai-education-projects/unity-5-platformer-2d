@@ -1,26 +1,30 @@
 ﻿using UnityEngine;
 
-namespace devdayo.Fsm.Gate.State
+namespace Devdayo.Platformer2D.Gate
 {
-	public class OnOpened : StateBehaviour
+	public class OnOpened : FsmStateBehaviour
 	{
-		GateFSM gate;
-		
-		void OnEnable()
-		{
-			gate = fsm as GateFSM;
-		}
+        public override void OnEnter()
+        {
 
-		void OnTriggerExit2D(Collider2D c)
-		{
-			if (!enabled)
-				return;
-			
-			if (!c.CompareTag (Tag.Player))
-				return;
+        }
 
-			gate.tween.MoveTo(1);
-			gate.DoTransition(Transition.OnClosing);
-		}
-	}
+        public override void OnExit()
+        {
+
+        }
+
+        public override void OnTriggerExit2D(Collider2D other)
+        {
+            base.OnTriggerExit2D(other);
+
+            if (!other.CompareTag(Tag.Player))
+                return;
+
+            GateFSM gate = GetOwner<GateFSM>();
+            gate.tween.MoveTo(1);
+
+            fsm.Go<OnClosing>();
+        }
+    }
 }

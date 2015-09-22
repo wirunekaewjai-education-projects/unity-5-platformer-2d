@@ -1,67 +1,67 @@
 ﻿using UnityEngine;
 
-namespace devdayo.Fsm.Player.State
+namespace Devdayo.Platformer2D.Player
 {
-    public class OnElevator : StateBehaviour
+    public class OnElevator : FsmStateBehaviour
     {
         PlayerFSM player;
 
-        void Awake()
+        public override void OnEnter()
         {
-            player = fsm as PlayerFSM;
+            player = fsm.owner as PlayerFSM;
         }
-        
-        void Update()
+
+        public override void OnExit()
         {
-            if (!enabled)
-                return;
+
+        }
+
+        public override void OnUpdate()
+        {
+            base.OnUpdate();
 
             player.UpdateHorizontal();
             player.Jump(false);
         }
 
-        void OnCollisionEnter2D(Collision2D c)
+        public override void OnCollisionEnter2D(Collision2D other)
         {
-            if (!enabled)
-                return;
+            base.OnCollisionEnter2D(other);
 
-            if (c.gameObject.CompareTag(Tag.Bot))
+            if (other.gameObject.CompareTag(Tag.Bot))
             {
-                Vector3 direction = c.relativeVelocity.normalized;
+                Vector3 direction = other.relativeVelocity.normalized;
                 float angle = Vector3.Angle(Vector3.down, direction);
 
                 // Bounce Up (Jump) or Die
                 if (angle >= 45f)
                 {
-                    player.DoTransition(Transition.OnFlop);
+                    fsm.Go<OnFlop>();
                 }
             }
         }
 
-
-        void OnCollisionStay2D(Collision2D c)
+        public override void OnCollisionStay2D(Collision2D other)
         {
-            if (!enabled)
-                return;
+            base.OnCollisionStay2D(other);
 
-            if (c.gameObject.CompareTag(Tag.Platform))
+            if (other.gameObject.CompareTag(Tag.Platform))
             {
                 float vy = player.rigidbody.velocity.y;
                 if (Mathf.Abs(vy) < Mathf.Epsilon)
                 {
-                    player.DoTransition(Transition.OnGround);
+                    fsm.Go<OnGround>();
                 }
             }
         }
 
-        void OnTriggerExit2D(Collider2D c)
+        public override void OnTriggerExit2D(Collider2D other)
         {
-            if (!enabled)
-                return;
+            base.OnTriggerExit2D(other);
 
-            if (c.gameObject.CompareTag(Tag.Elevator))
+            if (other.gameObject.CompareTag(Tag.Elevator))
             {
-                player.DoTransition(Transition.OnSoar);
+                fsm.Go<OnSoar>();
             }
         }
     }

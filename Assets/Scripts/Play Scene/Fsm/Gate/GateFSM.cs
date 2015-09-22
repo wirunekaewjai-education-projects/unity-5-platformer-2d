@@ -1,37 +1,27 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-namespace devdayo.Fsm.Gate
+namespace Devdayo.Platformer2D.Gate
 {
 	[RequireComponent(typeof(Tween))]
-	public class GateFSM : StateMachineBehaviour 
+	public class GateFSM : MonoBehaviour 
 	{
 		internal Tween tween;
+        internal Fsm fsm;
+
 		public int requireCoins = 1;
 		
 		void Awake()
 		{
 			tween = GetComponent<Tween>();	
 			tween.autoPlay = false;
+
+            fsm = new Fsm(this);
 		}
 		
 		void Start()
 		{
-			AddTransition(Transition.OnClosed,  typeof(State.OnClosed));
-			AddTransition(Transition.OnClosing, typeof(State.OnClosing));
-			AddTransition(Transition.OnOpened,  typeof(State.OnOpened));
-			AddTransition(Transition.OnOpening, typeof(State.OnOpening));
-			
-			DoTransition(Transition.OnClosed);
+            fsm.Go<OnClosed>();
 		}
 
-	}
-	
-	public static class Transition
-	{
-		public const int OnClosed  = 1;
-		public const int OnClosing = 2;
-		public const int OnOpened  = 3;
-		public const int OnOpening = 4;
 	}
 }
